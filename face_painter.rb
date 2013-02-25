@@ -20,7 +20,7 @@ class FacePainter
     @nose_apex_y = 45
     @nose_height = 16
     @nose_width = 8
-    @mouth_y = 85
+    @mouth_y = 65
   end
   
   def draw(app, face_vector, x, y, width, height)
@@ -81,12 +81,12 @@ class FacePainter
     
     # find parabola for bottom and top
     
-    current_x = scale_x(x1.to_i)
-    current_y = scale_y(y1)
+    current_x = scale_x(x1.to_i + @x_origin)
+    current_y = scale_y(y1 + @y_origin)
     app.stroke app.black
     ((x1.to_i + 1)..x2.to_i).each do |x|
-      next_x = scale_x(x)
-      next_y = scale_y((a * x ** 2 + b * x + c).to_i)
+      next_x = scale_x(x + @x_origin)
+      next_y = scale_y((a * x ** 2 + b * x + c).to_i + @y_origin)
       app.line(current_x, current_y, next_x, next_y)
       current_x = next_x
       current_y = next_y
@@ -95,14 +95,14 @@ class FacePainter
   
 
   def draw_mouth(app, p6, p9, p10)    
-    mouth_size = ((p9 - 0.5) * 10);
-    x1 = 60 - mouth_size
+    mouth_size = ((p9 - 0.5) * 10)
+    x1 = 40 - mouth_size
     y1 = @mouth_y
-    x2 = 80 + mouth_size
+    x2 = 60 + mouth_size
     y2 = @mouth_y
     x3 = ((x2 - x1) / 2) + x1
     y3 = ((p6 - 0.5) * 10) + @mouth_y
-    y3_prime = y3 + ((p10 / 2.0) * 10)  
+    y3_prime = y3 + ((p10 / 2.0) * 10)
     
     draw_lip(app, x1, y1, x2, y2, x3, y3)
     draw_lip(app, x1, y1, x2, y2, x3, y3_prime)
@@ -145,10 +145,10 @@ class FacePainter
   
   def xLine(app, x1, y1, x2, y2)
     app.stroke app.black
-    app.line  scale_x(x1) + @x_origin, 
-              scale_y(y1) + @x_origin,
-    					scale_x(x2) + @x_origin, 
-    					scale_y(y2) + @x_origin
+    app.line  scale_x(x1 + @x_origin), 
+              scale_y(y1 + @y_origin),
+    					scale_x(x2 + @x_origin), 
+    					scale_y(y2 + @y_origin)
     
   end
   
