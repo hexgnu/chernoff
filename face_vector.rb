@@ -1,19 +1,19 @@
 class FaceVector
+  FEATURES = %w[head_size]
+  
   attr_reader :points
+  attr_reader *FEATURES
+  
   def initialize
     # Makes an 11 point vector
     @points = []
     (1..11).each do |i|
       @points[i] = rand
     end
+    
+    FEATURES.each do |feature|
+      instance_variable_set("@#{feature}", rand)
+    end
   end
   
-  def distance(face_vector)
-    sum = 0.0
-    @points.each_with_index do |point, i|
-      diff = point - face_vector.points[i]
-      sum += diff * diff
-    end
-    Math::sqrt(sum)
-  end
 end

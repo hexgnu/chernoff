@@ -1,4 +1,5 @@
 require 'matrix'
+require './point.rb'
 class FacePainter
   def initialize(app, face_vector, x, y, width, height)
     @head_radius = 30
@@ -29,7 +30,7 @@ class FacePainter
   end
   
   def draw!
-    draw_head(@face_vector.points[1])
+    draw_head(@face_vector.head_size)
     draw_eyes(@face_vector.points[2], @face_vector.points[7], @face_vector.points[8])
     draw_pupil(@face_vector.points[3], @face_vector.points[7])
     draw_eyebrow(@face_vector.points[4])
