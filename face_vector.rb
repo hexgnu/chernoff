@@ -1,5 +1,5 @@
 class FaceVector
-  FEATURES = %w[head_size]
+  FEATURES = %w[head_size eyebrow_slant crosseyedness pupil_size eye_width eye_height eye_area nose_size mouth_depth mouth_width smile]
   
   attr_reader :points
   attr_reader *FEATURES

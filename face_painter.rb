@@ -30,46 +30,45 @@ class FacePainter
   end
   
   def draw!
-    draw_head(@face_vector.head_size)
-    draw_eyes(@face_vector.points[2], @face_vector.points[7], @face_vector.points[8])
-    draw_pupil(@face_vector.points[3], @face_vector.points[7])
-    draw_eyebrow(@face_vector.points[4])
-    draw_nose(@face_vector.points[5])
-    draw_mouth(@face_vector.points[6], @face_vector.points[9], @face_vector.points[10])
+    draw_head!
+    draw_eyes!
+    draw_pupils!
+    draw_eyebrow!
+    draw_nose!
+    draw_mouth!
   end
   
-  def draw_eyes(p2, p7, p8)
-    eye_spacing = ((p7 - 0.5) * 10).to_i
-    eye_size = (((p8 - 0.5) / 2.0) * 10).to_i
-    e = eccentricities(p2)
+  def draw_eyes!
+    eye_spacing = ((@face_vector.eye_width - 0.5) * 10).to_i
+    eye_size = (((@face_vector.eye_area - 0.5) / 2.0) * 10).to_i
+    e = eccentricities(@face_vector.eye_height)
 
     xOval(@eye_left_x - eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
     xOval(@eye_right_x + eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
   end
   
-  def draw_pupil(p3, p7)
-    pupil_size = ([1, p3 * 0.2].max * 2).to_i
-
-    xOval(@eye_left_x - ((p7 - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
-    xOval(@eye_right_x + ((p7 - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
+  def draw_pupils!
+    pupil_size = ([1, @face_vector.pupil_size * 2].max * 2).to_i
+    xOval(@eye_left_x - ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
+    xOval(@eye_right_x + ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
   end
   
-  def draw_head(p1)
-    e = eccentricities(p1)
+  def draw_head!
+    e = eccentricities(@face_vector.head_size)
     xOval(50, 50, @head_radius + e[0], @head_radius + e[1])
   end
   
-  def draw_nose(p5)
-    y = 55 + (((p5 - 0.5) / 2.0) * 10).to_i
+  def draw_nose!
+    y = 55 + (((@face_vector.nose_size - 0.5) / 2.0) * 10).to_i
 
     xLine(@nose_apex_x, @nose_apex_y, @nose_apex_x - (@nose_width / 2.0), y)
     xLine(@nose_apex_x - (@nose_width / 2.0), y, @nose_apex_x + (@nose_width / 2.0), y)
     xLine(@nose_apex_x + (@nose_width / 2.0), y, @nose_apex_x, @nose_apex_y)
   end
   
-  def draw_lip(x1, y1, x2, y2, x3, y3)
-    left = Matrix[[x1**2, x1, 1], [x2 ** 2, x2, 1], [x3 ** 2, x3, 1]]
-    right = Matrix[[y1],[y2],[y3]]
+  def draw_lip(p1, p2, p3)
+    left = Matrix[[p1.x**2, p1.x, 1], [p2.x ** 2, p2.x, 1], [p3.x ** 2, p3.x, 1]]
+    right = Matrix[[p1.y],[p2.y],[p3.y]]
     
     a, b, c = (left.inv * right).to_a.flatten
     
@@ -78,10 +77,10 @@ class FacePainter
     
     # find parabola for bottom and top
     
-    current_x = scale_x(x1.to_i + @x_origin)
-    current_y = scale_y(y1 + @y_origin)
+    current_x = scale_x(p1.x.to_i + @x_origin)
+    current_y = scale_y(p1.y + @y_origin)
     @app.stroke @app.black
-    ((x1.to_i + 1)..x2.to_i).each do |x|
+    ((p1.x.to_i + 1)..p2.x.to_i).each do |x|
       next_x = scale_x(x + @x_origin)
       next_y = scale_y((a * x ** 2 + b * x + c).to_i + @y_origin)
       @app.line(current_x, current_y, next_x, next_y)
@@ -91,24 +90,21 @@ class FacePainter
   end
   
 
-  def draw_mouth(p6, p9, p10)    
-    mouth_size = ((p9 - 0.5) * 10)
-    x1 = 40 - mouth_size
-    y1 = @mouth_y
-    x2 = 60 + mouth_size
-    y2 = @mouth_y
-    x3 = ((x2 - x1) / 2) + x1
-    y3 = ((p6 - 0.5) * 10) + @mouth_y
-    y3_prime = y3 + ((p10 / 2.0) * 10)
+  def draw_mouth!       
+    mouth_size = (@face_vector.mouth_width - 0.5) * 10
+    p1 = Point.new(40 - mouth_size, @mouth_y)
+    p2 = Point.new(60 + mouth_size, @mouth_y)
+    p3 = Point.new(((p2.x - p1.x)) / 2 + p1.x, ((@face_vector.smile - 0.5) * 10) + @mouth_y)
+    p3_prime = Point.new(p3.x, p3.y + ((@face_vector.mouth_depth / 2.0) * 10))
     
-    draw_lip(x1, y1, x2, y2, x3, y3)
-    draw_lip(x1, y1, x2, y2, x3, y3_prime)
+    draw_lip(p1, p2, p3)
+    draw_lip(p1, p2, p3_prime)
 	end
   
-  def draw_eyebrow(p4)
+  def draw_eyebrow!
     #screwed up
-    y1 = @eyebrow_y + ((p4 - 0.5) * 10).to_i
-    y2 = @eyebrow_y - ((p4 - 0.5) * 10).to_i
+    y1 = @eyebrow_y + ((@face_vector.eyebrow_slant - 0.5) * 10).to_i
+    y2 = @eyebrow_y - ((@face_vector.eyebrow_slant - 0.5) * 10).to_i
     @app.stroke @app.black
     xLine @eyebrow_l_l_x, y1, @eyebrow_l_r_x, y2
     xLine @eyebrow_r_l_x, y2, @eyebrow_r_r_x, y1
