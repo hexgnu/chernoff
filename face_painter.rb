@@ -19,14 +19,14 @@ class FacePainter
     @nose_width = 8
     @mouth_y = 65
     @x_factor = width / 100.0
-		@y_factor = height / 100.0
-		@x_origin = x
-		@y_origin = y
+    @y_factor = height / 100.0
+    @x_origin = x
+    @y_origin = y
 		
-		@app = app
-		@face_vector = face_vector
-		@width = width
-		@height = height
+    @app = app
+    @face_vector = face_vector
+    @width = width
+    @height = height
   end
   
   def draw!
@@ -123,6 +123,7 @@ class FacePainter
     else
       @app.fill @app.white
     end
+    
     @app.oval scale_x(x - width_r) + @x_origin, 
              scale_y(y - height_r) + @y_origin,
     				 scale_x(width_r * 2), 
