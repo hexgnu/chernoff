@@ -43,27 +43,27 @@ class FacePainter
     eye_size = (((@face_vector.eye_area - 0.5) / 2.0) * 10).to_i
     e = eccentricities(@face_vector.eye_height)
 
-    xOval(@eye_left_x - eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
-    xOval(@eye_right_x + eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
+    oval(@eye_left_x - eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
+    oval(@eye_right_x + eye_spacing, @eye_y, @eye_radius + eye_size + e[0], @eye_radius + eye_size + e[1])
   end
   
   def draw_pupils!
     pupil_size = ([1, @face_vector.pupil_size * 2].max * 2).to_i
-    xOval(@eye_left_x - ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
-    xOval(@eye_right_x + ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
+    oval(@eye_left_x - ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
+    oval(@eye_right_x + ((@face_vector.crosseyedness - 0.5) * 10).to_i, @eye_y, pupil_size, pupil_size, true)
   end
   
   def draw_head!
     e = eccentricities(@face_vector.head_size)
-    xOval(50, 50, @head_radius + e[0], @head_radius + e[1])
+    oval(50, 50, @head_radius + e[0], @head_radius + e[1])
   end
   
   def draw_nose!
     y = 55 + (((@face_vector.nose_size - 0.5) / 2.0) * 10).to_i
 
-    xLine(@nose_apex_x, @nose_apex_y, @nose_apex_x - (@nose_width / 2.0), y)
-    xLine(@nose_apex_x - (@nose_width / 2.0), y, @nose_apex_x + (@nose_width / 2.0), y)
-    xLine(@nose_apex_x + (@nose_width / 2.0), y, @nose_apex_x, @nose_apex_y)
+    line(@nose_apex_x, @nose_apex_y, @nose_apex_x - (@nose_width / 2.0), y)
+    line(@nose_apex_x - (@nose_width / 2.0), y, @nose_apex_x + (@nose_width / 2.0), y)
+    line(@nose_apex_x + (@nose_width / 2.0), y, @nose_apex_x, @nose_apex_y)
   end
   
   def draw_lip(p1, p2, p3)
@@ -102,27 +102,20 @@ class FacePainter
 	end
   
   def draw_eyebrow!
-    #screwed up
     y1 = @eyebrow_y + ((@face_vector.eyebrow_slant - 0.5) * 10).to_i
     y2 = @eyebrow_y - ((@face_vector.eyebrow_slant - 0.5) * 10).to_i
-    @app.stroke @app.black
-    xLine @eyebrow_l_l_x, y1, @eyebrow_l_r_x, y2
-    xLine @eyebrow_r_l_x, y2, @eyebrow_r_r_x, y1
+
+    line @eyebrow_l_l_x, y1, @eyebrow_l_r_x, y2
+    line @eyebrow_r_l_x, y2, @eyebrow_r_r_x, y1
   end
   
   def eccentricities(p)
-    a = []
-    if (p > 0.5)
-      a[0] = ((p - 0.5) * 20.0).to_i
-      a[1] = 0
-    else
-      a[0] = 0
-      a[1] = ((p - 0.5) * 20.0).abs.to_i
-    end
+    a = [0, ((p - 0.5) * 20.0).abs.to_i]
+    a.reverse! if p > 0.5
     a
   end
   
-  def xOval(x, y, height_r, width_r, fill = false)
+  def oval(x, y, height_r, width_r, fill = false)
     
     if fill
       @app.nostroke 
@@ -136,7 +129,7 @@ class FacePainter
     				 scale_y(height_r * 2)
   end
   
-  def xLine(x1, y1, x2, y2)
+  def line(x1, y1, x2, y2)
     @app.stroke @app.black
     @app.line  scale_x(x1 + @x_origin), 
               scale_y(y1 + @y_origin),
