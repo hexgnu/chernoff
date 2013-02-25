@@ -22,7 +22,7 @@ class FacePainter
     @y_factor = height / 100.0
     @x_origin = x
     @y_origin = y
-		
+    
     @app = app
     @face_vector = face_vector
     @width = width
@@ -99,7 +99,7 @@ class FacePainter
     
     draw_lip(p1, p2, p3)
     draw_lip(p1, p2, p3_prime)
-	end
+  end
   
   def draw_eyebrow!
     y1 = @eyebrow_y + ((@face_vector.eyebrow_slant - 0.5) * 10).to_i
@@ -126,16 +126,16 @@ class FacePainter
     
     @app.oval scale_x(x - width_r) + @x_origin, 
              scale_y(y - height_r) + @y_origin,
-    				 scale_x(width_r * 2), 
-    				 scale_y(height_r * 2)
+             scale_x(width_r * 2), 
+             scale_y(height_r * 2)
   end
   
   def line(x1, y1, x2, y2)
     @app.stroke @app.black
     @app.line  scale_x(x1 + @x_origin), 
               scale_y(y1 + @y_origin),
-    					scale_x(x2 + @x_origin), 
-    					scale_y(y2 + @y_origin)
+              scale_x(x2 + @x_origin), 
+              scale_y(y2 + @y_origin)
     
   end
   
