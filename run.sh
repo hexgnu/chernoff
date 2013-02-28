@@ -24,11 +24,8 @@ do
         ;;
   esac
 done
-
-if [ "$1" = "" ]; then
-  open -a "$APPFULLPATH/../../../Shoes.app"
-else
-  open -a "$APPFULLPATH/../../../Shoes.app" "$RUNPATH"
-fi
-
 cd -
+FULLPATH=`pwd`
+FULLPATH="${FULLPATH}/chernoff.rb"
+
+open -a "$APPFULLPATH/../../../Shoes.app" $FULLPATH
